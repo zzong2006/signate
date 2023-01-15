@@ -27,9 +27,14 @@ def fit():
         val_dataloaders=valid_loader
     )
 
-def eval():
+def eval(model_path):
+    # load model
+    
+    
+    # eval model
     dnn.eval()
 
+    # save submission
     submissions = []
     with torch.no_grad():
         y_hat = (dnn.mlp(test_dataset.x[: ,1:]) > 0.5).type(torch.IntTensor)
@@ -39,4 +44,4 @@ def eval():
 
 
 if __name__ == '__main__':
-
+    dh = DatasetHandler()

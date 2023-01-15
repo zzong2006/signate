@@ -1,11 +1,15 @@
 import os
+import sys
 import json
 import logging
 
-import pandas as pd
 import torch
-from torchvision.datasets import MNIST
+import pandas as pd
+from sklearn.model_selection import KFold
 from torch.utils.data import DataLoader, Dataset
+
+
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 
 class GameDataset(Dataset):
@@ -37,11 +41,11 @@ class GameDataset(Dataset):
 
 
 class DatasetHandler:
-    def __init__(self, option_path='./config/dataset.json', 
-                 load_with_testset=True):
+    def __init__(self, option_path='./config/dataset.json'):
         with open(option_path, "r") as jread:
             self.opt = json.load(jread)
-        self.logger = logging.getLogger('DatatsetHandler')
+        self.logger = logging.getLogger('DatatsetHandler') 
+        self.logger.setLevel(logging.DEBUG)
         self.train_ds = GameDataset(self._read_data('train'), is_testset=False)
         self.test_ds = GameDataset(
             self._read_data('test'), 
@@ -53,14 +57,14 @@ class DatasetHandler:
         """
             target: train or test
         """
-        if not os.path.exists(self.opt[target].pickle):
-            self.logger.info(f'cannot found pickle of {target}. load just csv')
-            df = pd.read_csv(self.opt[target].csv)
+        if not os.path.exists(self.opt[target]['pickle']):
+            self.logger.info(f'cannot found pickle of ({target}). Load just csv')
+            df = pd.read_csv(self.opt[target]['csv'])
             self.logger.info('convert csv to pickle')
-            df.to_pickle(self.opt[target].pickle)
+            df.to_pickle(self.opt[target]['pickle'])
         else:
-            self.logger.info(f'found pickle of {target}. load pickle')
-            df = pd.read_pickle(self.opt[target].pickle)
+            self.logger.info(f'found pickle of ({target}). Load pickle')
+            df = pd.read_pickle(self.opt[target]['pickle'])
         return df
     
     def _set_loader(self, dataset, shuffle, batch_size):
@@ -89,3 +93,4 @@ class DatasetHandler:
 
         seed = torch.Generator().manual_seed(42)
         train_set, valid_set = torch.utils.data.random_split(game_dataset, [train_set_size, valid_set_size], generator=seed)
+        return train_set, valid_set

@@ -6,5 +6,9 @@
     "test": {
         "csv": "./data/test.csv",
         "pickle": "./data/test.pickle"
+    },
+    "k-fold": {
+        "splits": 10,
+        "random_state": 0
     }
 }
