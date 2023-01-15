@@ -1,0 +1,10 @@
+{
+    "train": {
+        "csv": "./data/train.csv",
+        "pickle": "./data/train.pickle"
+    },
+    "test": {
+        "csv": "./data/test.csv",
+        "pickle": "./data/test.pickle"
+    }
+}
